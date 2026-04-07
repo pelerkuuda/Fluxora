@@ -38,7 +38,7 @@ const DEMO_LISTINGS = [
 export default function MarketplacePage() {
   return (
     <div className="mx-auto max-w-7xl px-4 pb-20 pt-36 sm:px-6 lg:px-8">
-      <div className="text-center">
+      <div className="section-reveal text-center">
         <div className="font-mono text-xs uppercase tracking-[0.24em] text-white/45">MARKETPLACE</div>
         <h1 className="mt-4 font-serif text-4xl sm:text-5xl md:text-6xl">Verified machine data, ready to buy.</h1>
         <p className="mx-auto mt-6 max-w-[560px] font-mono text-sm leading-7 text-white/60 sm:text-base">
@@ -46,7 +46,7 @@ export default function MarketplacePage() {
         </p>
       </div>
 
-      <section className="mt-12 grid gap-4 sm:grid-cols-3">
+      <section className="section-reveal mt-12 grid gap-4 sm:grid-cols-3">
         {[
           ["04", "featured feeds"],
           ["$4-$8", "daily access range"],
@@ -59,7 +59,7 @@ export default function MarketplacePage() {
         ))}
       </section>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-[280px_1fr]">
+      <div className="section-reveal mt-8 grid gap-8 lg:grid-cols-[280px_1fr]">
         <aside className="motion-frame h-fit border border-border p-5">
           <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/45">Filters</div>
           <div className="mt-5 space-y-3">

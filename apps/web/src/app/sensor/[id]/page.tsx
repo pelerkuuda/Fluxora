@@ -36,14 +36,14 @@ export default async function SensorDetailPage({
         / {sensor.name}
       </div>
 
-      <div className="mt-8 max-w-4xl">
+      <div className="section-reveal mt-8 max-w-4xl">
         <div className="font-mono text-xs uppercase tracking-[0.24em] text-white/45">STREAM DETAIL</div>
         <h1 className="mt-4 font-serif text-4xl sm:text-5xl md:text-6xl">{sensor.name}</h1>
         <p className="mt-6 max-w-[620px] font-mono text-sm leading-7 text-white/60 sm:text-base">{sensor.description}</p>
         <div className="mt-4 font-mono text-sm uppercase text-primary">{sensor.location}</div>
       </div>
 
-      <section className="mt-12 grid gap-4 sm:grid-cols-3">
+      <section className="section-reveal mt-12 grid gap-4 sm:grid-cols-3">
         {[
           ["128.4K", "indexed records"],
           ["1.2s", "average read latency"],
@@ -56,7 +56,7 @@ export default async function SensorDetailPage({
         ))}
       </section>
 
-      <section className="mt-8 grid gap-8 lg:grid-cols-[1fr_320px]">
+      <section className="section-reveal orbit-shell mt-8 grid gap-8 lg:grid-cols-[1fr_320px]">
         <div className="space-y-8">
           <div className="motion-frame border border-border p-6">
             <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/45">Access plans</div>

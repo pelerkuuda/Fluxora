@@ -6,7 +6,7 @@ const metrics = [
 
 export default function Home() {
   return (
-    <section className="flex min-h-screen flex-col justify-between px-4 pb-16 pt-36 sm:px-6 lg:px-8">
+    <section className="orbit-shell flex min-h-screen flex-col justify-between px-4 pb-16 pt-36 sm:px-6 lg:px-8">
       <div />
 
       <div className="mx-auto w-full max-w-6xl text-center">
@@ -40,13 +40,32 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="reveal-up reveal-delay-4 mx-auto grid w-full max-w-6xl gap-4 sm:grid-cols-3">
+      <div className="section-reveal reveal-delay-4 mx-auto grid w-full max-w-6xl gap-4 sm:grid-cols-3">
         {metrics.map(([value, label]) => (
           <div key={label} className="motion-card motion-frame border border-border px-5 py-4 text-center">
             <div className="text-2xl tracking-[-0.04em] text-white sm:text-3xl">{value}</div>
             <div className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-white/45">{label}</div>
           </div>
         ))}
+      </div>
+
+      <div className="section-reveal mt-10 overflow-hidden border-y border-border py-4">
+        <div className="signal-marquee">
+          <div className="signal-marquee-track">
+            <span className="signal-chip">Shelby-backed integrity</span>
+            <span className="signal-chip">Machine telemetry marketplace</span>
+            <span className="signal-chip">Premium stream access</span>
+            <span className="signal-chip">Aptos settlement rails</span>
+            <span className="signal-chip">Producer-owned signal economy</span>
+          </div>
+          <div className="signal-marquee-track" aria-hidden="true">
+            <span className="signal-chip">Shelby-backed integrity</span>
+            <span className="signal-chip">Machine telemetry marketplace</span>
+            <span className="signal-chip">Premium stream access</span>
+            <span className="signal-chip">Aptos settlement rails</span>
+            <span className="signal-chip">Producer-owned signal economy</span>
+          </div>
+        </div>
       </div>
     </section>
   );

@@ -30,7 +30,7 @@ export function DashboardClient() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-20 pt-36 sm:px-6 lg:px-8">
-      <div className="text-center">
+      <div className="section-reveal text-center">
         <div className="font-mono text-xs uppercase tracking-[0.24em] text-white/45">DASHBOARD</div>
         <h1 className="mt-4 font-serif text-4xl sm:text-5xl md:text-6xl">Operate your sensor portfolio.</h1>
         <p className="mx-auto mt-6 max-w-[560px] font-mono text-sm leading-7 text-white/60 sm:text-base">
@@ -38,7 +38,7 @@ export function DashboardClient() {
         </p>
       </div>
 
-      <section className="mt-12 grid gap-4 sm:grid-cols-3">
+      <section className="section-reveal mt-12 grid gap-4 sm:grid-cols-3">
         {[
           ["08", "owned streams"],
           ["$312", "monthly run rate"],
@@ -51,7 +51,7 @@ export function DashboardClient() {
         ))}
       </section>
 
-      <section className="mt-8 space-y-4">
+      <section className="section-reveal mt-8 space-y-4">
         {mySensors.length > 0 ? (
           mySensors.map((sensor) => (
             <a key={sensor.id} href={`/sensor/${sensor.id}`} className="motion-card motion-frame block border border-border p-6 transition-colors duration-150 ease-out hover:border-primary">

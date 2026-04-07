@@ -15,7 +15,7 @@ const stats = [
 export default function ExplorePage() {
   return (
     <div className="mx-auto max-w-7xl px-4 pb-20 pt-36 sm:px-6 lg:px-8">
-      <div className="text-center">
+      <div className="section-reveal text-center">
         <div className="font-mono text-xs uppercase tracking-[0.24em] text-white/45">EXPLORE</div>
         <h1 className="mt-4 font-serif text-4xl sm:text-5xl md:text-6xl">Scan the live signal footprint.</h1>
         <p className="mx-auto mt-6 max-w-[620px] font-mono text-sm leading-7 text-white/60 sm:text-base">
@@ -23,7 +23,7 @@ export default function ExplorePage() {
         </p>
       </div>
 
-      <section className="mt-12 border border-border p-6 sm:p-8">
+      <section className="section-reveal orbit-shell mt-12 border border-border p-6 sm:p-8">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-stretch">
           <div className="motion-frame flex min-h-[420px] flex-1 items-center justify-center border border-dashed border-border bg-white/[0.02] text-center">
             <div>
@@ -50,7 +50,7 @@ export default function ExplorePage() {
         </div>
       </section>
 
-      <section className="mt-8 grid gap-4 sm:grid-cols-3">
+      <section className="section-reveal mt-8 grid gap-4 sm:grid-cols-3">
         {stats.map(([value, label]) => (
           <div key={label} className="motion-card motion-frame border border-border px-5 py-4 text-center">
             <div className="text-2xl tracking-[-0.04em] text-white sm:text-3xl">{value}</div>
