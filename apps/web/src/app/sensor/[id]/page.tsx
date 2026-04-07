@@ -12,13 +12,6 @@ const integrity = [
   ["Audit", "Passed"],
 ];
 
-const sampleRows = [
-  ["2026-04-07 16:40", "PM2.5", "42 AQI"],
-  ["2026-04-07 16:45", "PM10", "31 AQI"],
-  ["2026-04-07 16:50", "CO2", "612 ppm"],
-  ["2026-04-07 16:55", "NO2", "18 ppb"],
-];
-
 export default async function SensorDetailPage({
   params,
 }: {
@@ -31,70 +24,48 @@ export default async function SensorDetailPage({
     name: "Jakarta Air Quality Monitor",
     location: "Central Jakarta, Indonesia",
     description:
-      "Urban air-quality telemetry packaged into Shelby blobs, tracked with integrity metadata, and exposed through paid access plans for monitoring, analytics, and model training use cases.",
+      "A verified urban telemetry feed for buyers who need consistent air-quality data with provenance and paid access controls.",
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-      <div className="mb-5 text-xs uppercase tracking-[0.24em] text-[#6f8aa4]">
+    <div className="mx-auto max-w-7xl px-4 pb-20 pt-36 sm:px-6 lg:px-8">
+      <div className="font-mono text-xs uppercase tracking-[0.24em] text-white/45">
         <a href="/marketplace" className="hover:text-white">
-          marketplace
+          Marketplace
         </a>{" "}
         / {sensor.name}
       </div>
 
-      <section className="rounded-3xl border border-white/10 bg-[#07111b] px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
-        <div className="text-[11px] uppercase tracking-[0.28em] text-[#7e97b0]">sensor / detail / verified stream</div>
-        <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-[1.04] tracking-[-0.05em] text-white sm:text-6xl lg:text-[68px]">
-          {sensor.name}
-        </h1>
-        <p className="mt-5 max-w-2xl text-base leading-8 text-[#9db0c3]">{sensor.description}</p>
-        <div className="mt-4 text-sm uppercase tracking-[0.18em] text-[#4cc2ff]">{sensor.location}</div>
-      </section>
+      <div className="mt-8 max-w-4xl">
+        <div className="font-mono text-xs uppercase tracking-[0.24em] text-white/45">STREAM DETAIL</div>
+        <h1 className="mt-4 font-serif text-4xl sm:text-5xl md:text-6xl">{sensor.name}</h1>
+        <p className="mt-6 max-w-[620px] font-mono text-sm leading-7 text-white/60 sm:text-base">{sensor.description}</p>
+        <div className="mt-4 font-mono text-sm uppercase text-primary">{sensor.location}</div>
+      </div>
 
-      <section className="mt-8 grid gap-6 lg:grid-cols-[0.62fr_0.38fr]">
-        <div className="space-y-6">
-          <div className="rounded-2xl border border-white/10 bg-[#08111a] p-6">
-            <div className="text-[11px] uppercase tracking-[0.26em] text-[#7e97b0]">Recent sample payload</div>
-            <div className="mt-5 overflow-hidden rounded-2xl border border-white/10">
-              <div className="grid grid-cols-3 border-b border-white/10 bg-[#0d1723] px-4 py-3 text-[11px] uppercase tracking-[0.22em] text-[#6f8aa4]">
-                <span>timestamp</span>
-                <span>field</span>
-                <span>value</span>
+      <section className="mt-12 grid gap-8 lg:grid-cols-[1fr_320px]">
+        <div className="border border-border p-6">
+          <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/45">Access plans</div>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {pricingPlans.map(([label, price]) => (
+              <div key={label} className="border border-border p-5">
+                <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/40">{label}</div>
+                <div className="mt-2 text-2xl text-white">{price}</div>
               </div>
-              {sampleRows.map((row) => (
-                <div key={row.join("-")} className="grid grid-cols-3 border-b border-white/10 bg-[#08111a] px-4 py-3 text-sm text-[#dce8f5] last:border-b-0">
-                  <span>{row[0]}</span>
-                  <span>{row[1]}</span>
-                  <span>{row[2]}</span>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
-
-          <div className="rounded-2xl border border-white/10 bg-[#08111a] p-6">
-            <div className="text-[11px] uppercase tracking-[0.26em] text-[#7e97b0]">Access plans</div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              {pricingPlans.map(([label, price]) => (
-                <div key={label} className="rounded-2xl border border-white/10 bg-[#0b1621] p-5">
-                  <div className="text-[11px] uppercase tracking-[0.18em] text-[#6f8aa4]">{label}</div>
-                  <div className="mt-2 text-2xl text-white">{price}</div>
-                </div>
-              ))}
-            </div>
-            <button className="mt-6 inline-flex items-center justify-center rounded-xl border border-[#27537a] bg-[#0e2740] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#143556]">
-              Connect wallet
-            </button>
-          </div>
+          <button className="mt-8 inline-flex h-12 items-center justify-center border border-primary px-6 font-mono text-sm uppercase text-primary transition-colors duration-150 ease-out hover:bg-primary hover:text-black">
+            Connect wallet
+          </button>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-[#08111a] p-6">
-          <div className="text-[11px] uppercase tracking-[0.26em] text-[#7e97b0]">Integrity layer</div>
-          <div className="mt-5 space-y-3">
+        <div className="border border-border p-6">
+          <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/45">Integrity layer</div>
+          <div className="mt-6 space-y-4">
             {integrity.map(([label, value]) => (
-              <div key={label} className="rounded-2xl border border-white/10 bg-[#0b1621] p-4">
-                <div className="text-sm text-[#97abc0]">{label}</div>
-                <div className="mt-2 font-mono text-sm uppercase tracking-[0.12em] text-white">{value}</div>
+              <div key={label} className="border border-border p-4">
+                <div className="font-mono text-sm text-white/45">{label}</div>
+                <div className="mt-2 font-mono text-sm uppercase text-white">{value}</div>
               </div>
             ))}
           </div>
