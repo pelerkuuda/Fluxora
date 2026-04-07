@@ -44,7 +44,7 @@ export function DashboardClient() {
           ["$312", "monthly run rate"],
           ["99.2%", "uptime health"],
         ].map(([value, label]) => (
-          <div key={label} className="border border-border px-5 py-4 text-center">
+          <div key={label} className="motion-card motion-frame border border-border px-5 py-4 text-center">
             <div className="text-2xl tracking-[-0.04em] text-white sm:text-3xl">{value}</div>
             <div className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-white/45">{label}</div>
           </div>
@@ -54,7 +54,7 @@ export function DashboardClient() {
       <section className="mt-8 space-y-4">
         {mySensors.length > 0 ? (
           mySensors.map((sensor) => (
-            <a key={sensor.id} href={`/sensor/${sensor.id}`} className="block border border-border p-6 transition-colors duration-150 ease-out hover:border-primary">
+            <a key={sensor.id} href={`/sensor/${sensor.id}`} className="motion-card motion-frame block border border-border p-6 transition-colors duration-150 ease-out hover:border-primary">
               <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                   <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/45">{sensor.type}</div>

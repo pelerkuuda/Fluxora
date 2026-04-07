@@ -52,7 +52,7 @@ export default function MarketplacePage() {
           ["$4-$8", "daily access range"],
           ["826K", "sampled points indexed"],
         ].map(([value, label]) => (
-          <div key={label} className="border border-border px-5 py-4 text-center">
+          <div key={label} className="motion-card motion-frame border border-border px-5 py-4 text-center">
             <div className="text-2xl tracking-[-0.04em] text-white sm:text-3xl">{value}</div>
             <div className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-white/45">{label}</div>
           </div>
@@ -60,16 +60,16 @@ export default function MarketplacePage() {
       </section>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[280px_1fr]">
-        <aside className="h-fit border border-border p-5">
+        <aside className="motion-frame h-fit border border-border p-5">
           <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/45">Filters</div>
           <div className="mt-5 space-y-3">
-            <button className="w-full border border-primary px-4 py-3 text-left font-mono text-sm uppercase text-primary">
+            <button className="motion-button w-full border border-primary px-4 py-3 text-left font-mono text-sm uppercase text-primary">
               All streams
             </button>
             {Object.entries(SENSOR_TYPE_CONFIG).slice(0, 6).map(([key, config]) => (
               <button
                 key={key}
-                className="w-full border border-border px-4 py-3 text-left font-mono text-sm uppercase text-white/70 transition-colors duration-150 ease-out hover:text-white"
+                className="motion-button w-full border border-border px-4 py-3 text-left font-mono text-sm uppercase text-white/70 transition-colors duration-150 ease-out hover:text-white"
               >
                 {config.icon} {config.label}
               </button>
@@ -79,7 +79,7 @@ export default function MarketplacePage() {
 
         <div className="space-y-4">
           {DEMO_LISTINGS.map((listing) => (
-            <a key={listing.id} href={`/sensor/${listing.id}`} className="block border border-border p-6 transition-colors duration-150 ease-out hover:border-primary">
+            <a key={listing.id} href={`/sensor/${listing.id}`} className="motion-card motion-frame block border border-border p-6 transition-colors duration-150 ease-out hover:border-primary">
               <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                   <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/45">

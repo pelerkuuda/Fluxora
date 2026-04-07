@@ -38,13 +38,13 @@ export default function RootLayout({
                   <div className="font-mono text-[10px] uppercase tracking-[0.32em] text-white/45">Signal market</div>
                 </a>
 
-                <nav className="hidden items-center justify-center border border-border bg-black/80 px-5 py-3 backdrop-blur-sm lg:flex">
+                <nav className="motion-frame hidden items-center justify-center border border-border bg-black/80 px-5 py-3 backdrop-blur-sm lg:flex">
                   <div className="flex items-center gap-x-8">
                     {navItems.map(([label, href]) => (
                       <a
                         key={href}
                         href={href}
-                        className="font-mono text-sm uppercase text-white/60 transition-colors duration-150 ease-out hover:text-white"
+                        className="motion-link font-mono text-sm uppercase text-white/60 transition-colors duration-150 ease-out hover:text-white"
                       >
                         {label}
                       </a>
