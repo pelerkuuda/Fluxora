@@ -49,7 +49,7 @@ export default function Home() {
         ))}
       </div>
 
-      <div className="section-reveal mt-10 overflow-hidden border-y border-border py-4">
+      <div className="section-reveal mt-10 overflow-hidden border-y border-border py-4 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
         <div className="signal-marquee">
           <div className="signal-marquee-track">
             <span className="signal-chip">Shelby-backed integrity</span>

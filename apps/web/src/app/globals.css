@@ -24,6 +24,11 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -260,19 +265,27 @@ body::after {
 
 .signal-marquee {
   display: flex;
+  align-items: center;
   width: max-content;
-  min-width: 200%;
-  animation: marqueeMove 16s linear infinite;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marqueeMove 22s linear infinite;
 }
 
 .signal-marquee-track {
-  display: flex;
+  display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
-  gap: 2rem;
-  padding-right: 2rem;
+  gap: 1rem;
+  padding-right: 1rem;
+  white-space: nowrap;
 }
 
 .signal-chip {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--border);
   padding: 0.75rem 1rem;
   font-family: var(--font-mono);
