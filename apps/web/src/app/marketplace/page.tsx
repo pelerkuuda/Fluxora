@@ -46,7 +46,20 @@ export default function MarketplacePage() {
         </p>
       </div>
 
-      <div className="mt-12 grid gap-8 lg:grid-cols-[280px_1fr]">
+      <section className="mt-12 grid gap-4 sm:grid-cols-3">
+        {[
+          ["04", "featured feeds"],
+          ["$4-$8", "daily access range"],
+          ["826K", "sampled points indexed"],
+        ].map(([value, label]) => (
+          <div key={label} className="border border-border px-5 py-4 text-center">
+            <div className="text-2xl tracking-[-0.04em] text-white sm:text-3xl">{value}</div>
+            <div className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-white/45">{label}</div>
+          </div>
+        ))}
+      </section>
+
+      <div className="mt-8 grid gap-8 lg:grid-cols-[280px_1fr]">
         <aside className="h-fit border border-border p-5">
           <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/45">Filters</div>
           <div className="mt-5 space-y-3">

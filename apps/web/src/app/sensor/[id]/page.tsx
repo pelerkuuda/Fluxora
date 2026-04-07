@@ -43,20 +43,52 @@ export default async function SensorDetailPage({
         <div className="mt-4 font-mono text-sm uppercase text-primary">{sensor.location}</div>
       </div>
 
-      <section className="mt-12 grid gap-8 lg:grid-cols-[1fr_320px]">
-        <div className="border border-border p-6">
-          <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/45">Access plans</div>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            {pricingPlans.map(([label, price]) => (
-              <div key={label} className="border border-border p-5">
-                <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/40">{label}</div>
-                <div className="mt-2 text-2xl text-white">{price}</div>
-              </div>
-            ))}
+      <section className="mt-12 grid gap-4 sm:grid-cols-3">
+        {[
+          ["128.4K", "indexed records"],
+          ["1.2s", "average read latency"],
+          ["24/7", "stream availability"],
+        ].map(([value, label]) => (
+          <div key={label} className="border border-border px-5 py-4 text-center">
+            <div className="text-2xl tracking-[-0.04em] text-white sm:text-3xl">{value}</div>
+            <div className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-white/45">{label}</div>
           </div>
-          <button className="mt-8 inline-flex h-12 items-center justify-center border border-primary px-6 font-mono text-sm uppercase text-primary transition-colors duration-150 ease-out hover:bg-primary hover:text-black">
-            Connect wallet
-          </button>
+        ))}
+      </section>
+
+      <section className="mt-8 grid gap-8 lg:grid-cols-[1fr_320px]">
+        <div className="space-y-8">
+          <div className="border border-border p-6">
+            <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/45">Access plans</div>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {pricingPlans.map(([label, price]) => (
+                <div key={label} className="border border-border p-5">
+                  <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-white/40">{label}</div>
+                  <div className="mt-2 text-2xl text-white">{price}</div>
+                </div>
+              ))}
+            </div>
+            <button className="mt-8 inline-flex h-12 items-center justify-center border border-primary px-6 font-mono text-sm uppercase text-primary transition-colors duration-150 ease-out hover:bg-primary hover:text-black">
+              [Connect wallet]
+            </button>
+          </div>
+
+          <div className="border border-border p-6">
+            <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/45">Recent samples</div>
+            <div className="mt-6 space-y-3">
+              {[
+                ["PM2.5", "42 ug/m3", "17:24 UTC"],
+                ["PM10", "58 ug/m3", "17:24 UTC"],
+                ["Humidity", "71%", "17:24 UTC"],
+              ].map(([metric, value, timestamp]) => (
+                <div key={metric} className="flex items-center justify-between border border-border px-4 py-3 font-mono text-sm text-white/70">
+                  <span>{metric}</span>
+                  <span className="text-white">{value}</span>
+                  <span className="text-white/40">{timestamp}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="border border-border p-6">

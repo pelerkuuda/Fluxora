@@ -11,13 +11,13 @@ export function ConnectWalletButton() {
 
   if (session) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3 border border-border bg-black/80 px-4 py-3 backdrop-blur-sm">
         <div className="font-mono text-xs uppercase text-white/50">{shortenAddress(session.walletAddress)}</div>
         <button
           onClick={() => void disconnectWallet()}
           className="font-mono text-xs uppercase text-primary transition-colors duration-150 ease-out hover:text-primary/80"
         >
-          Disconnect
+          [Disconnect]
         </button>
       </div>
     );
@@ -32,9 +32,9 @@ export function ConnectWalletButton() {
       onClick={() => void connectWallet()}
       disabled={isLoading}
       title={isPetraReady ? "Connect with Petra" : "Petra not detected, open install page"}
-      className="font-mono text-xs uppercase text-primary transition-colors duration-150 ease-out hover:text-primary/80 disabled:cursor-not-allowed disabled:opacity-60"
+      className="border border-border bg-black/80 px-4 py-3 font-mono text-xs uppercase text-primary transition-colors duration-150 ease-out hover:border-primary disabled:cursor-not-allowed disabled:opacity-60"
     >
-      {label}
+      [{label}]
     </button>
   );
 }
