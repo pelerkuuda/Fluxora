@@ -1,81 +1,112 @@
 "use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Points, PointMaterial } from "@react-three/drei";
+import { Line, Points, PointMaterial } from "@react-three/drei";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 
-function WavePoints() {
+function GlobeNetwork() {
   const pointsRef = useRef<THREE.Points>(null);
+  const lineGroupRef = useRef<THREE.Group>(null);
 
-  const positions = useMemo(() => {
-    const data: number[] = [];
-    const cols = 110;
-    const rows = 42;
+  const { positions, lineSets } = useMemo(() => {
+    const pointData: number[] = [];
+    const sampled: THREE.Vector3[] = [];
+    const radiusX = 4.8;
+    const radiusY = 2.7;
+    const latSteps = 18;
+    const lonSteps = 42;
 
-    for (let y = 0; y < rows; y += 1) {
-      for (let x = 0; x < cols; x += 1) {
-        const nx = x / (cols - 1);
-        const ny = y / (rows - 1);
-        data.push((nx - 0.5) * 14, (ny - 0.5) * 5.2, 0);
+    for (let lat = 0; lat <= latSteps; lat += 1) {
+      const v = lat / latSteps;
+      const phi = (v - 0.5) * Math.PI;
+      for (let lon = 0; lon < lonSteps; lon += 1) {
+        const u = lon / lonSteps;
+        const theta = u * Math.PI * 2;
+        const x = Math.cos(phi) * Math.cos(theta) * radiusX;
+        const y = Math.sin(phi) * radiusY;
+        const z = Math.cos(phi) * Math.sin(theta) * 1.8;
+        pointData.push(x, y, z);
+        if (lon % 6 === 0 && lat % 2 === 0) sampled.push(new THREE.Vector3(x, y, z));
       }
     }
 
-    return new Float32Array(data);
+    const arcs: THREE.Vector3[][] = [];
+    for (let i = 0; i < sampled.length; i += 4) {
+      const start = sampled[i];
+      const end = sampled[(i + 7) % sampled.length];
+      if (!start || !end) continue;
+
+      const mid = start.clone().lerp(end, 0.5);
+      mid.z += 0.9;
+      const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
+      arcs.push(curve.getPoints(36));
+    }
+
+    return {
+      positions: new Float32Array(pointData),
+      lineSets: arcs,
+    };
   }, []);
 
   useFrame(({ clock }) => {
-    const points = pointsRef.current;
-    if (!points) return;
+    const t = clock.getElapsedTime() * 0.35;
 
-    const time = clock.getElapsedTime() * 0.45;
-    const position = points.geometry.attributes.position;
-
-    for (let i = 0; i < position.count; i += 1) {
-      const ix = i * 3;
-      const x = position.array[ix] as number;
-      const baseY = position.array[ix + 1] as number;
-
-      const waveA = Math.sin(x * 0.7 + time * 1.8 + baseY * 0.9) * 0.22;
-      const waveB = Math.cos(x * 0.32 - time * 1.2 + baseY * 1.8) * 0.16;
-      const depth = Math.sin(x * 0.45 + time + baseY * 1.5) * 0.8;
-
-      position.array[ix + 2] = depth;
-      position.array[ix + 1] = baseY + waveA + waveB;
+    if (pointsRef.current) {
+      pointsRef.current.rotation.y = t * 0.45;
+      pointsRef.current.rotation.x = -0.18 + Math.sin(t * 0.8) * 0.03;
+      pointsRef.current.rotation.z = Math.sin(t * 0.4) * 0.025;
     }
 
-    position.needsUpdate = true;
-    points.rotation.x = -0.9;
-    points.rotation.z = Math.sin(time * 0.25) * 0.04;
+    if (lineGroupRef.current) {
+      lineGroupRef.current.rotation.y = t * 0.45;
+      lineGroupRef.current.rotation.x = -0.18 + Math.sin(t * 0.8) * 0.03;
+      lineGroupRef.current.rotation.z = Math.sin(t * 0.4) * 0.025;
+    }
   });
 
   return (
-    <Points ref={pointsRef} positions={positions} stride={3} frustumCulled={false}>
-      <PointMaterial
-        transparent
-        color="#ffffff"
-        size={0.032}
-        sizeAttenuation
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
-        opacity={0.82}
-      />
-    </Points>
+    <group position={[0, -0.2, 0]}>
+      <group ref={lineGroupRef}>
+        {lineSets.map((points, index) => (
+          <Line
+            key={index}
+            points={points}
+            color={index % 3 === 0 ? "#ffd54a" : "#ffffff"}
+            lineWidth={0.5}
+            transparent
+            opacity={0.16}
+          />
+        ))}
+      </group>
+
+      <Points ref={pointsRef} positions={positions} stride={3} frustumCulled={false}>
+        <PointMaterial
+          transparent
+          color="#ffffff"
+          size={0.03}
+          sizeAttenuation
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+          opacity={0.92}
+        />
+      </Points>
+    </group>
   );
 }
 
 export function ParticleWaveGL() {
   return (
     <div className="pointer-events-none absolute inset-0">
-      <Canvas camera={{ position: [0, 0, 7], fov: 42 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
+      <Canvas camera={{ position: [0, 0, 8], fov: 42 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
         <color attach="background" args={["#000000"]} />
-        <fog attach="fog" args={["#000000", 4, 12]} />
-        <ambientLight intensity={0.7} />
-        <directionalLight position={[0, 0, 5]} intensity={0.6} />
-        <WavePoints />
+        <fog attach="fog" args={["#000000", 5, 12]} />
+        <ambientLight intensity={0.85} />
+        <directionalLight position={[0, 1, 5]} intensity={0.7} />
+        <GlobeNetwork />
       </Canvas>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_38%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.78),rgba(0,0,0,0.08)_30%,rgba(0,0,0,0.1)_72%,rgba(0,0,0,0.88))]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.06),transparent_34%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.86),rgba(0,0,0,0.15)_26%,rgba(0,0,0,0.16)_72%,rgba(0,0,0,0.92))]" />
     </div>
   );
 }
