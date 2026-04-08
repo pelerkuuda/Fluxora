@@ -127,6 +127,13 @@ export const marketplaceApi = {
 };
 
 // Ingest API (for demo/testing)
+export const demoApi = {
+  seed: () =>
+    apiFetch<{ seeded: string[] }>("/api/demo/seed", {
+      method: "POST",
+    }),
+};
+
 export const ingestApi = {
   send: (sensorId: string, apiKey: string, data: Record<string, unknown>) =>
     apiFetch(`/api/ingest/${sensorId}`, {

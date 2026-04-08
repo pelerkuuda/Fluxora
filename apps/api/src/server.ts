@@ -10,6 +10,7 @@ import { ingestRoutes } from "./routes/ingest.js";
 import { marketplaceRoutes } from "./routes/marketplace.js";
 import { authRoutes } from "./routes/auth.js";
 import { onchainRoutes } from "./routes/onchain.js";
+import { demoRoutes } from "./routes/demo.js";
 import { getBatchService } from "./services/batch.js";
 
 const PORT = Number(process.env.PORT) || 3001;
@@ -53,6 +54,7 @@ async function main() {
   await app.register(ingestRoutes);
   await app.register(marketplaceRoutes);
   await app.register(onchainRoutes);
+  await app.register(demoRoutes);
 
   // Start batch processor
   const batchService = getBatchService();

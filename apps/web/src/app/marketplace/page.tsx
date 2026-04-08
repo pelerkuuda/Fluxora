@@ -1,4 +1,5 @@
 import { SENSOR_TYPE_CONFIG } from "@fluxora/shared";
+import { SensorAccessPanel } from "@/components/sensor-access-panel";
 
 const DEMO_LISTINGS = [
   {
@@ -79,13 +80,15 @@ export default function MarketplacePage() {
 
         <div className="space-y-4">
           {DEMO_LISTINGS.map((listing) => (
-            <a key={listing.id} href={`/sensor/${listing.id}`} className="motion-card motion-frame block border border-border p-6 transition-colors duration-150 ease-out hover:border-primary">
-              <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-                <div>
+            <div key={listing.id} className="motion-card motion-frame border border-border p-6 transition-colors duration-150 ease-out hover:border-primary">
+              <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                <div className="lg:max-w-xl">
                   <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/45">
                     {SENSOR_TYPE_CONFIG[listing.type].label}
                   </div>
-                  <h2 className="mt-3 font-serif text-3xl text-white">{listing.name}</h2>
+                  <a href={`/sensor/${listing.id}`} className="block">
+                    <h2 className="mt-3 font-serif text-3xl text-white">{listing.name}</h2>
+                  </a>
                   <div className="mt-2 font-mono text-sm text-white/60">{listing.locationLabel}</div>
                 </div>
 
@@ -100,7 +103,11 @@ export default function MarketplacePage() {
                   </div>
                 </div>
               </div>
-            </a>
+
+              <div className="mt-6">
+                <SensorAccessPanel sensorId={listing.id} compact />
+              </div>
+            </div>
           ))}
         </div>
       </div>

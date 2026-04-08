@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { AccessPlan, ContractPaymentQuote } from "@fluxora/shared";
-import { marketplaceApi, onchainApi } from "@/lib/api";
+import type { AccessGrantReceipt, AccessPlan, ContractPaymentQuote } from "@fluxora/shared";
+import { demoApi, marketplaceApi, onchainApi } from "@/lib/api";
 import { useWallet } from "./wallet-provider";
 
 const PLAN_OPTIONS: { label: string; value: AccessPlan }[] = [
@@ -14,14 +14,16 @@ const PLAN_OPTIONS: { label: string; value: AccessPlan }[] = [
 
 interface SensorAccessPanelProps {
   sensorId: string;
+  compact?: boolean;
 }
 
-export function SensorAccessPanel({ sensorId }: SensorAccessPanelProps) {
+export function SensorAccessPanel({ sensorId, compact = false }: SensorAccessPanelProps) {
   const { session, connectWallet, isLoading } = useWallet();
   const [selectedPlan, setSelectedPlan] = useState<AccessPlan>("daily");
   const [quote, setQuote] = useState<ContractPaymentQuote | null>(null);
   const [preview, setPreview] = useState<Record<string, unknown>[]>([]);
   const [message, setMessage] = useState<string>("Request a quote to simulate on-chain access.");
+  const [receipt, setReceipt] = useState<AccessGrantReceipt | null>(null);
   const [isWorking, setIsWorking] = useState(false);
 
   const canAct = useMemo(() => Boolean(session?.walletAddress), [session?.walletAddress]);
@@ -35,6 +37,7 @@ export function SensorAccessPanel({ sensorId }: SensorAccessPanelProps) {
     setIsWorking(true);
     setMessage("Building payment quote...");
 
+    await demoApi.seed();
     const response = await onchainApi.quote({ sensorId, plan: selectedPlan });
     if (response.success && response.data) {
       setQuote(response.data);
@@ -69,6 +72,10 @@ export function SensorAccessPanel({ sensorId }: SensorAccessPanelProps) {
       amountPaid: quote.amount,
     });
 
+    if (settle.success && settle.data) {
+      setReceipt(settle.data as AccessGrantReceipt);
+    }
+
     if (!settle.success) {
       setMessage(settle.error || "Failed to settle access");
       setIsWorking(false);
@@ -91,13 +98,13 @@ export function SensorAccessPanel({ sensorId }: SensorAccessPanelProps) {
   };
 
   return (
-    <div className="motion-frame border border-border p-6">
+    <div className={`motion-frame border border-border ${compact ? "p-4" : "p-6"}`}>
       <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/45">Live access flow</div>
-      <p className="mt-4 font-mono text-sm leading-7 text-white/60">
+      <p className={`mt-4 font-mono text-white/60 ${compact ? "text-xs leading-6" : "text-sm leading-7"}`}>
         Demo the Phase 2-3 path, request a quote, settle access, and fetch preview rows from stored Shelby manifests.
       </p>
 
-      <div className="mt-6 grid gap-3 sm:grid-cols-2">
+      <div className={`mt-6 grid gap-3 ${compact ? "grid-cols-2" : "sm:grid-cols-2"}`}>
         {PLAN_OPTIONS.map((plan) => (
           <button
             key={plan.value}
@@ -150,6 +157,15 @@ export function SensorAccessPanel({ sensorId }: SensorAccessPanelProps) {
           <div className="text-white/45">Current quote</div>
           <div className="mt-2">{quote.amount} {quote.currency}</div>
           <div className="mt-1 text-white/45">{quote.functionName}</div>
+        </div>
+      ) : null}
+
+      {receipt ? (
+        <div className="mt-4 border border-primary/50 bg-primary/[0.05] p-4 font-mono text-sm text-white/80">
+          <div className="text-primary">Settlement receipt</div>
+          <div className="mt-2">Tx: {receipt.txHash}</div>
+          <div className="mt-1">Plan: {receipt.plan}</div>
+          <div className="mt-1">Valid until: {new Date(receipt.validUntil).toLocaleString()}</div>
         </div>
       ) : null}
 
