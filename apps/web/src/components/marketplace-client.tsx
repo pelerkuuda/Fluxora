@@ -1,98 +1,75 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SENSOR_TYPE_CONFIG } from "@fluxora/shared";
 import { SensorAccessPanel } from "@/components/sensor-access-panel";
+import { demoApi, marketplaceApi } from "@/lib/api";
 
 const FILTER_KEYS = ["temperature", "humidity", "air_quality", "soil_moisture", "traffic", "weather"] as const;
 
 type FilterKey = (typeof FILTER_KEYS)[number];
 
-const DEMO_LISTINGS: Array<{
+type MarketplaceListing = {
   id: string;
   name: string;
-  type: FilterKey;
-  locationLabel: string;
+  type: string;
+  description?: string | null;
+  locationLabel?: string | null;
   pricingDaily: number;
-  totalDataPoints: number;
-}> = [
-  {
-    id: "sensor-101",
-    name: "Bandung Cold Chain Thermometer",
-    type: "temperature" as const,
-    locationLabel: "Bandung, West Java",
-    pricingDaily: 3,
-    totalDataPoints: 74200,
-  },
-  {
-    id: "sensor-102",
-    name: "Pontianak Humidity Tracker",
-    type: "humidity" as const,
-    locationLabel: "Pontianak, West Kalimantan",
-    pricingDaily: 4,
-    totalDataPoints: 68100,
-  },
-  {
-    id: "sensor-001",
-    name: "Jakarta Air Quality Monitor",
-    type: "air_quality" as const,
-    locationLabel: "Central Jakarta, Indonesia",
-    pricingDaily: 5,
-    totalDataPoints: 128400,
-  },
-  {
-    id: "sensor-002",
-    name: "Bali Soil Moisture Array",
-    type: "soil_moisture" as const,
-    locationLabel: "Ubud, Bali, Indonesia",
-    pricingDaily: 8,
-    totalDataPoints: 86200,
-  },
-  {
-    id: "sensor-003",
-    name: "Surabaya Traffic Counter",
-    type: "traffic" as const,
-    locationLabel: "Surabaya, East Java",
-    pricingDaily: 4,
-    totalDataPoints: 256000,
-  },
-  {
-    id: "sensor-004",
-    name: "Singapore Weather Hub",
-    type: "weather" as const,
-    locationLabel: "Marina Bay, Singapore",
-    pricingDaily: 6,
-    totalDataPoints: 340000,
-  },
-];
+  totalDataPoints?: number;
+};
 
 export function MarketplaceClient() {
   const [activeFilter, setActiveFilter] = useState<FilterKey | "all">("all");
+  const [listings, setListings] = useState<MarketplaceListing[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadListings = async () => {
+      setLoading(true);
+      setError(null);
+
+      await demoApi.seed();
+      const response = await marketplaceApi.browse();
+
+      if (response.success && Array.isArray(response.data)) {
+        setListings(response.data as MarketplaceListing[]);
+      } else {
+        setError(response.error || "Failed to load marketplace listings");
+      }
+
+      setLoading(false);
+    };
+
+    void loadListings();
+  }, []);
 
   const filteredListings = useMemo(() => {
-    if (activeFilter === "all") return DEMO_LISTINGS;
-    return DEMO_LISTINGS.filter((listing) => listing.type === activeFilter);
-  }, [activeFilter]);
+    if (activeFilter === "all") return listings;
+    return listings.filter((listing) => listing.type === activeFilter);
+  }, [activeFilter, listings]);
 
   const filterCounts = useMemo(() => {
     return FILTER_KEYS.reduce(
       (acc, key) => {
-        acc[key] = DEMO_LISTINGS.filter((listing) => listing.type === key).length;
+        acc[key] = listings.filter((listing) => listing.type === key).length;
         return acc;
       },
       {} as Record<FilterKey, number>
     );
-  }, []);
+  }, [listings]);
 
   const stats = useMemo(() => {
-    const totalPoints = filteredListings.reduce((sum, listing) => sum + listing.totalDataPoints, 0);
-    const minPrice = filteredListings.length > 0 ? Math.min(...filteredListings.map((listing) => listing.pricingDaily)) : 0;
-    const maxPrice = filteredListings.length > 0 ? Math.max(...filteredListings.map((listing) => listing.pricingDaily)) : 0;
+    const totalPoints = filteredListings.reduce((sum, listing) => sum + (listing.totalDataPoints ?? 0), 0);
+    const prices = filteredListings.map((listing) => Number(listing.pricingDaily ?? 0)).filter((price) => !Number.isNaN(price));
+    const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+    const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
 
     return [
       [String(filteredListings.length).padStart(2, "0"), activeFilter === "all" ? "featured feeds" : `${activeFilter} feeds`],
       [`$${minPrice}${maxPrice !== minPrice ? `-$${maxPrice}` : ""}`, "daily access range"],
-      [`${Math.round(totalPoints / 1000)}K`, "sampled points indexed"],
+      [`${Math.max(1, Math.round(totalPoints / 1000))}K`, "sampled points indexed"],
     ] as const;
   }, [activeFilter, filteredListings]);
 
@@ -126,7 +103,7 @@ export function MarketplaceClient() {
               }`}
             >
               <span>All streams</span>
-              <span className="text-[11px] text-white/45">{DEMO_LISTINGS.length}</span>
+              <span className="text-[11px] text-white/45">{listings.length}</span>
             </button>
             {FILTER_KEYS.map((key) => {
               const config = SENSOR_TYPE_CONFIG[key];
@@ -148,37 +125,51 @@ export function MarketplaceClient() {
         </aside>
 
         <div className="space-y-4">
-          {filteredListings.length > 0 ? (
-            filteredListings.map((listing) => (
-              <div key={listing.id} className="motion-card motion-frame border border-border p-6 transition-colors duration-150 ease-out hover:border-primary">
-                <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="lg:max-w-xl">
-                    <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/45">
-                      {SENSOR_TYPE_CONFIG[listing.type].label}
+          {loading ? (
+            <div className="border border-border p-10 text-center font-mono text-sm text-white/60">
+              Loading marketplace streams...
+            </div>
+          ) : error ? (
+            <div className="border border-border p-10 text-center font-mono text-sm text-amber-300">
+              {error}
+            </div>
+          ) : filteredListings.length > 0 ? (
+            filteredListings.map((listing) => {
+              const typeKey = (listing.type in SENSOR_TYPE_CONFIG ? listing.type : "custom") as keyof typeof SENSOR_TYPE_CONFIG;
+              return (
+                <div key={listing.id} className="motion-card motion-frame border border-border p-6 transition-colors duration-150 ease-out hover:border-primary">
+                  <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="lg:max-w-xl">
+                      <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-white/45">
+                        {SENSOR_TYPE_CONFIG[typeKey].label}
+                      </div>
+                      <a href={`/sensor/${listing.id}`} className="block">
+                        <h2 className="mt-3 font-serif text-3xl text-white">{listing.name}</h2>
+                      </a>
+                      <div className="mt-2 font-mono text-sm text-white/60">{listing.locationLabel || "Unknown location"}</div>
+                      {listing.description ? (
+                        <p className="mt-4 max-w-2xl font-mono text-sm leading-7 text-white/55">{listing.description}</p>
+                      ) : null}
                     </div>
-                    <a href={`/sensor/${listing.id}`} className="block">
-                      <h2 className="mt-3 font-serif text-3xl text-white">{listing.name}</h2>
-                    </a>
-                    <div className="mt-2 font-mono text-sm text-white/60">{listing.locationLabel}</div>
+
+                    <div className="grid gap-4 font-mono text-sm uppercase text-white/65 sm:grid-cols-2 lg:text-right">
+                      <div>
+                        <div className="text-white/40">Daily access</div>
+                        <div className="mt-2 text-2xl text-white">${Number(listing.pricingDaily ?? 0).toFixed(2)}</div>
+                      </div>
+                      <div>
+                        <div className="text-white/40">Data points</div>
+                        <div className="mt-2 text-white">{Math.max(1, Math.round((listing.totalDataPoints ?? 0) / 1000))}K</div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="grid gap-4 font-mono text-sm uppercase text-white/65 sm:grid-cols-2 lg:text-right">
-                    <div>
-                      <div className="text-white/40">Daily access</div>
-                      <div className="mt-2 text-2xl text-white">${listing.pricingDaily}</div>
-                    </div>
-                    <div>
-                      <div className="text-white/40">Data points</div>
-                      <div className="mt-2 text-white">{(listing.totalDataPoints / 1000).toFixed(0)}K</div>
-                    </div>
+                  <div className="mt-6">
+                    <SensorAccessPanel sensorId={listing.id} compact />
                   </div>
                 </div>
-
-                <div className="mt-6">
-                  <SensorAccessPanel sensorId={listing.id} compact />
-                </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <div className="border border-border p-10 text-center font-mono text-sm text-white/60">
               No streams available for this filter yet.
