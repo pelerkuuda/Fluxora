@@ -74,6 +74,16 @@ export function MarketplaceClient() {
     return DEMO_LISTINGS.filter((listing) => listing.type === activeFilter);
   }, [activeFilter]);
 
+  const filterCounts = useMemo(() => {
+    return FILTER_KEYS.reduce(
+      (acc, key) => {
+        acc[key] = DEMO_LISTINGS.filter((listing) => listing.type === key).length;
+        return acc;
+      },
+      {} as Record<FilterKey, number>
+    );
+  }, []);
+
   const stats = useMemo(() => {
     const totalPoints = filteredListings.reduce((sum, listing) => sum + listing.totalDataPoints, 0);
     const minPrice = filteredListings.length > 0 ? Math.min(...filteredListings.map((listing) => listing.pricingDaily)) : 0;
@@ -111,11 +121,12 @@ export function MarketplaceClient() {
           <div className="mt-5 space-y-3">
             <button
               onClick={() => setActiveFilter("all")}
-              className={`motion-button w-full border px-4 py-3 text-left font-mono text-sm uppercase ${
+              className={`motion-button flex w-full items-center justify-between border px-4 py-3 text-left font-mono text-sm uppercase ${
                 activeFilter === "all" ? "border-primary text-primary" : "border-border text-white/70 hover:text-white"
               }`}
             >
-              All streams
+              <span>All streams</span>
+              <span className="text-[11px] text-white/45">{DEMO_LISTINGS.length}</span>
             </button>
             {FILTER_KEYS.map((key) => {
               const config = SENSOR_TYPE_CONFIG[key];
@@ -124,11 +135,14 @@ export function MarketplaceClient() {
                 <button
                   key={key}
                   onClick={() => setActiveFilter(key)}
-                  className={`motion-button w-full border px-4 py-3 text-left font-mono text-sm uppercase transition-colors duration-150 ease-out ${
+                  className={`motion-button flex w-full items-center justify-between border px-4 py-3 text-left font-mono text-sm uppercase transition-colors duration-150 ease-out ${
                     isActive ? "border-primary text-primary" : "border-border text-white/70 hover:text-white"
                   }`}
                 >
-                  {config.icon} {config.label}
+                  <span>
+                    {config.icon} {config.label}
+                  </span>
+                  <span className="text-[11px] text-white/45">{filterCounts[key]}</span>
                 </button>
               );
             })}
