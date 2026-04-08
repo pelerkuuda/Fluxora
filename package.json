@@ -18,7 +18,8 @@
   },
   "devDependencies": {
     "turbo": "^2.4.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vercel": "^50.41.0"
   },
   "packageManager": "npm@10.0.0"
 }
