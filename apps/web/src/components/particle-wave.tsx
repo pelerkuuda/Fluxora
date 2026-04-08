@@ -29,52 +29,72 @@ export function ParticleWave() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
+    const sparkleNoise = (x: number, y: number, layer: number) => {
+      const hash = Math.sin(x * 12.9898 + y * 78.233 + layer * 37.719) * 43758.5453;
+      const fract = hash - Math.floor(hash);
+      const pulse = Math.sin(time * 0.9 + fract * Math.PI * 2) * 0.5 + 0.5;
+      return 0.55 + pulse * 0.9;
+    };
+
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
 
-      for (let row = 0; row < 8; row += 1) {
-        const yBase = height * 0.22 + row * 34;
-        const amplitude = 18 + row * 2.5;
-        const alpha = 0.035 + row * 0.012;
+      const glow = ctx.createRadialGradient(width * 0.5, height * 0.42, 0, width * 0.5, height * 0.42, width * 0.44);
+      glow.addColorStop(0, "rgba(255,255,255,0.05)");
+      glow.addColorStop(0.5, "rgba(255,199,0,0.035)");
+      glow.addColorStop(1, "rgba(255,199,0,0)");
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, width, height);
 
-        ctx.beginPath();
-        for (let x = 0; x <= width; x += 8) {
+      const rows = 9;
+      for (let layer = 0; layer < rows; layer += 1) {
+        const yBase = height * 0.22 + layer * 26;
+        const amplitude = 14 + layer * 2.2;
+        const depthFactor = 1 - layer / rows;
+        let prevPoint: { x: number; y: number } | null = null;
+
+        for (let x = width * 0.08; x <= width * 0.92; x += 18) {
           const y =
             yBase +
-            Math.sin(x * 0.012 + time * 0.9 + row * 0.55) * amplitude +
-            Math.cos(x * 0.006 + time * 0.45 + row) * 8;
+            Math.sin(x * 0.011 + time * 0.8 + layer * 0.45) * amplitude +
+            Math.cos(x * 0.0045 + time * 0.42 + layer) * 9;
 
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
+          const normalizedX = (x - width * 0.5) / (width * 0.5);
+          const revealMask = Math.max(0.18, 1 - Math.abs(normalizedX) * 0.82);
+          const sparkle = sparkleNoise(x * 0.01, y * 0.01, layer);
+          const alpha = (0.065 + depthFactor * 0.075) * revealMask * sparkle;
+          const radius = 0.8 + depthFactor * 1.55;
 
-        for (let x = 0; x <= width; x += 42) {
-          const y =
-            yBase +
-            Math.sin(x * 0.012 + time * 0.9 + row * 0.55) * amplitude +
-            Math.cos(x * 0.006 + time * 0.45 + row) * 8;
+          if (prevPoint) {
+            ctx.beginPath();
+            ctx.moveTo(prevPoint.x, prevPoint.y);
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = `rgba(255,255,255,${alpha * 0.18})`;
+            ctx.lineWidth = 0.75;
+            ctx.stroke();
+          }
 
-          const glow = row % 2 === 0 ? "255, 199, 0" : "255, 255, 255";
           ctx.beginPath();
-          ctx.arc(x, y, row % 3 === 0 ? 1.8 : 1.2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${glow}, ${0.16 + row * 0.02})`;
-          ctx.shadowBlur = 14;
-          ctx.shadowColor = `rgba(255, 199, 0, 0.18)`;
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = `rgba(255,255,255,${alpha * 0.28})`;
           ctx.fill();
           ctx.shadowBlur = 0;
+
+          prevPoint = { x, y };
         }
       }
 
-      const gradient = ctx.createRadialGradient(width * 0.5, height * 0.42, 10, width * 0.5, height * 0.42, width * 0.46);
-      gradient.addColorStop(0, "rgba(255, 199, 0, 0.08)");
-      gradient.addColorStop(1, "rgba(255, 199, 0, 0)");
-      ctx.fillStyle = gradient;
+      const vignette = ctx.createLinearGradient(0, 0, 0, height);
+      vignette.addColorStop(0, "rgba(0,0,0,0.52)");
+      vignette.addColorStop(0.24, "rgba(0,0,0,0.08)");
+      vignette.addColorStop(0.78, "rgba(0,0,0,0.12)");
+      vignette.addColorStop(1, "rgba(0,0,0,0.6)");
+      ctx.fillStyle = vignette;
       ctx.fillRect(0, 0, width, height);
 
-      time += 0.015;
+      time += 0.014;
       animationFrame = window.requestAnimationFrame(draw);
     };
 
