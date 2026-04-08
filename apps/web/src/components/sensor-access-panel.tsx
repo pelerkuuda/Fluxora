@@ -18,7 +18,7 @@ interface SensorAccessPanelProps {
 }
 
 export function SensorAccessPanel({ sensorId, compact = false }: SensorAccessPanelProps) {
-  const { session, connectWallet, isLoading } = useWallet();
+  const { session } = useWallet();
   const [selectedPlan, setSelectedPlan] = useState<AccessPlan>("daily");
   const [quote, setQuote] = useState<ContractPaymentQuote | null>(null);
   const [preview, setPreview] = useState<Record<string, unknown>[]>([]);
@@ -118,38 +118,26 @@ export function SensorAccessPanel({ sensorId, compact = false }: SensorAccessPan
         ))}
       </div>
 
-      <div className="mt-6 space-y-3">
-        {!canAct ? (
-          <button
-            onClick={() => void connectWallet()}
-            disabled={isLoading || isWorking}
-            className="motion-button inline-flex h-12 items-center justify-center border border-primary px-6 font-mono text-sm uppercase text-primary transition-colors duration-150 ease-out hover:bg-primary hover:text-black disabled:opacity-60"
-          >
-            [Connect wallet]
-          </button>
-        ) : (
-          <div className="flex flex-wrap gap-3">
-            <button
-              onClick={() => void requestQuote()}
-              disabled={isWorking}
-              className="motion-button inline-flex h-12 items-center justify-center border border-border px-6 font-mono text-sm uppercase text-white transition-colors duration-150 ease-out hover:border-primary hover:text-primary disabled:opacity-60"
-            >
-              [Request quote]
-            </button>
-            <button
-              onClick={() => void settleAndFetch()}
-              disabled={isWorking || !quote}
-              className="motion-button inline-flex h-12 items-center justify-center border border-primary px-6 font-mono text-sm uppercase text-primary transition-colors duration-150 ease-out hover:bg-primary hover:text-black disabled:opacity-60"
-            >
-              [Settle + fetch]
-            </button>
-          </div>
-        )}
+      <div className="mt-6 flex flex-wrap gap-3">
+        <button
+          onClick={() => void requestQuote()}
+          disabled={isWorking || !canAct}
+          className="motion-button inline-flex h-12 items-center justify-center border border-border px-6 font-mono text-sm uppercase text-white transition-colors duration-150 ease-out hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          [Request quote]
+        </button>
+        <button
+          onClick={() => void settleAndFetch()}
+          disabled={isWorking || !quote || !canAct}
+          className="motion-button inline-flex h-12 items-center justify-center border border-primary px-6 font-mono text-sm uppercase text-primary transition-colors duration-150 ease-out hover:bg-primary hover:text-black disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          [Settle + fetch]
+        </button>
       </div>
 
       <div className="mt-6 border border-border p-4 font-mono text-sm text-white/70">
         <div className="text-white/45">Status</div>
-        <div className="mt-2">{message}</div>
+        <div className="mt-2">{!canAct ? "Connect wallet from the navbar to activate this access flow." : message}</div>
       </div>
 
       {quote ? (
