@@ -1,3 +1,5 @@
+import { ParticleWave } from "@/components/particle-wave";
+
 const metrics = [
   ["12.4M", "telemetry events / day"],
   ["480+", "producer identities"],
@@ -6,10 +8,14 @@ const metrics = [
 
 export default function Home() {
   return (
-    <section className="orbit-shell flex min-h-screen flex-col justify-between px-4 pb-16 pt-36 sm:px-6 lg:px-8">
+    <section className="orbit-shell relative flex min-h-screen flex-col justify-between px-4 pb-16 pt-36 sm:px-6 lg:px-8">
+      <div className="absolute inset-x-0 top-20 h-[460px] overflow-hidden">
+        <ParticleWave />
+      </div>
+
       <div />
 
-      <div className="mx-auto w-full max-w-6xl text-center">
+      <div className="relative z-10 mx-auto w-full max-w-6xl text-center">
         <div className="reveal-up mb-6 inline-flex h-8 items-center justify-center border border-border bg-[#262626]/50 px-3 font-mono text-sm font-medium text-white/50 backdrop-blur-xs">
           <span className="pulse-dot mr-2 inline-block h-2.5 w-2.5 rounded-full bg-primary shadow-glow shadow-primary/50" />
           BETA RELEASE
@@ -40,7 +46,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="section-reveal reveal-delay-4 mx-auto grid w-full max-w-6xl gap-4 sm:grid-cols-3">
+      <div className="relative z-10 section-reveal reveal-delay-4 mx-auto grid w-full max-w-6xl gap-4 sm:grid-cols-3">
         {metrics.map(([value, label]) => (
           <div key={label} className="motion-card motion-frame border border-border px-5 py-4 text-center">
             <div className="text-2xl tracking-[-0.04em] text-white sm:text-3xl">{value}</div>
@@ -49,7 +55,7 @@ export default function Home() {
         ))}
       </div>
 
-      <div className="section-reveal mt-10 overflow-hidden border-y border-border py-4 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+      <div className="relative z-10 section-reveal mt-10 overflow-hidden border-y border-border py-4 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
         <div className="signal-marquee">
           <div className="signal-marquee-track">
             <span className="signal-chip">Shelby-backed integrity</span>
