@@ -1,3 +1,11 @@
+const mapPoints = [
+  { city: "Jakarta", top: "42%", left: "78%", label: "Air quality", streams: 5 },
+  { city: "Singapore", top: "58%", left: "82%", label: "Weather", streams: 3 },
+  { city: "Tokyo", top: "36%", left: "88%", label: "Industrial", streams: 8 },
+  { city: "Bangkok", top: "50%", left: "76%", label: "Mobility", streams: 4 },
+  { city: "Sydney", top: "78%", left: "90%", label: "Coastal env", streams: 2 },
+];
+
 const locations = [
   ["Jakarta", "05 active streams", "High-demand air quality + traffic"],
   ["Singapore", "03 active streams", "Commercial weather and logistics"],
@@ -25,12 +33,32 @@ export default function ExplorePage() {
 
       <section className="section-reveal orbit-shell mt-12 border border-border p-6 sm:p-8">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-stretch">
-          <div className="motion-frame flex min-h-[420px] flex-1 items-center justify-center border border-dashed border-border bg-white/[0.02] text-center">
-            <div>
-              <div className="font-mono text-xs uppercase tracking-[0.24em] text-white/45">Mapbox layer pending</div>
+          <div className="motion-frame relative flex min-h-[420px] flex-1 items-center justify-center overflow-hidden border border-dashed border-border bg-white/[0.02] text-center">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,199,0,0.08),transparent_45%)]" />
+            <div className="absolute inset-[12%] rounded-[999px] border border-white/8" />
+            <div className="absolute inset-[22%] rounded-[999px] border border-white/8" />
+            <div className="absolute inset-[32%] rounded-[999px] border border-white/8" />
+
+            {mapPoints.map((point) => (
+              <div
+                key={point.city}
+                className="absolute -translate-x-1/2 -translate-y-1/2"
+                style={{ top: point.top, left: point.left }}
+              >
+                <div className="pulse-dot h-3 w-3 rounded-full bg-primary shadow-[0_0_18px_rgba(255,199,0,0.55)]" />
+                <div className="mt-3 border border-border bg-black/85 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-white/70 backdrop-blur-sm">
+                  <div className="text-primary">{point.city}</div>
+                  <div className="mt-1">{point.label}</div>
+                  <div className="mt-1 text-white/45">{point.streams} streams</div>
+                </div>
+              </div>
+            ))}
+
+            <div className="relative z-10 max-w-md px-6">
+              <div className="font-mono text-xs uppercase tracking-[0.24em] text-white/45">Interactive footprint</div>
               <div className="mt-4 font-serif text-3xl sm:text-4xl">Global sensor atlas</div>
-              <p className="mx-auto mt-4 max-w-md font-mono text-sm leading-7 text-white/60">
-                The interactive world map lands next, with city pins, real-time overlays, and instant routing into each telemetry stream.
+              <p className="mx-auto mt-4 font-mono text-sm leading-7 text-white/60">
+                Demo-mode geospatial layout with live city pins, Shelby-backed stream clusters, and instant routing into access flows.
               </p>
             </div>
           </div>

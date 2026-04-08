@@ -88,6 +88,26 @@ fluxora/
 | GET | /api/marketplace | Browse marketplace |
 | POST | /api/marketplace/subscribe | Subscribe to sensor |
 | GET | /api/marketplace/:sensorId/data | Access sensor data |
+| POST | /api/auth/challenge | Create wallet auth challenge |
+| POST | /api/auth/verify | Verify wallet session |
+| POST | /api/onchain/quote | Build demo payment quote |
+| POST | /api/onchain/settle | Record demo settlement |
+| POST | /api/demo/seed | Seed demo sensors + Shelby blobs |
+
+## Demo Walkthrough
+
+1. Open `/dashboard` and click **Seed demo data**
+2. Browse `/marketplace` and request a quote from any featured stream
+3. Settle the access flow to generate a receipt
+4. Open the sensor detail page to show Shelby preview rows and integrity metadata
+5. Visit `/explore` for the geospatial signal atlas view
+
+## Deployment Notes
+
+- Web is structured for Vercel deployment
+- API is structured for Railway or any Node host
+- Use `apps/api/.env.example` and `apps/web/.env.example` as deployment env templates
+- Demo mode can be primed with `POST /api/demo/seed`
 
 ## Revenue Model
 

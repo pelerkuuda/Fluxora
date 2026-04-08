@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { sensorsApi } from "@/lib/api";
 import { useWallet } from "./wallet-provider";
+import { DemoSeedPanel } from "./demo-seed-panel";
 
 interface DashboardSensor {
   id: string;
@@ -51,7 +52,8 @@ export function DashboardClient() {
         ))}
       </section>
 
-      <section className="section-reveal mt-8 space-y-4">
+      <section className="section-reveal mt-8 grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
+        <div className="space-y-4">
         {mySensors.length > 0 ? (
           mySensors.map((sensor) => (
             <a key={sensor.id} href={`/sensor/${sensor.id}`} className="motion-card motion-frame block border border-border p-6 transition-colors duration-150 ease-out hover:border-primary">
@@ -74,6 +76,28 @@ export function DashboardClient() {
             {session ? "Belum ada sensor untuk wallet ini." : "Connect wallet dulu buat buka dashboard producer."}
           </div>
         )}
+        </div>
+
+        <div className="space-y-4">
+          <DemoSeedPanel />
+          <div className="motion-frame border border-border p-6">
+            <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/45">Deployment track</div>
+            <div className="mt-5 space-y-3 font-mono text-sm text-white/70">
+              <div className="flex items-center justify-between border border-border px-4 py-3">
+                <span>Web</span>
+                <span className="text-primary">Vercel-ready</span>
+              </div>
+              <div className="flex items-center justify-between border border-border px-4 py-3">
+                <span>API</span>
+                <span className="text-primary">Railway-ready</span>
+              </div>
+              <div className="flex items-center justify-between border border-border px-4 py-3">
+                <span>Demo data</span>
+                <span className="text-primary">Seed on demand</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );
