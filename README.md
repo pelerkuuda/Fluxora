@@ -1,41 +1,88 @@
 # 🌊 Fluxora
 
-**Decentralized IoT Data Marketplace built on [Shelby Protocol](https://docs.shelby.xyz)**
+**Demo-ready decentralized IoT data marketplace built on [Shelby Protocol](https://docs.shelby.xyz)**
 
-Connect your sensors → Stream data to Shelby's decentralized storage → Sell access on the marketplace.
+Fluxora lets sensor operators publish machine telemetry, batch it into Shelby-backed blobs, expose premium access plans, and demo quote → settle → preview access flows through a polished marketplace UI.
+
+## Current Status
+
+**Hackathon / showcase status:** ready
+
+- Phase 1, Foundation: complete
+- Phase 2, Wallet integration: complete for demo
+- Phase 3, On-chain + Shelby integration: complete for demo
+- Phase 4, Polish + demo readiness: complete for demo
+
+This repo is currently optimized for **demo, judging, and presentation flow**.
+It is **not yet a full production mainnet release**.
+
+## Core Demo Flow
+
+1. Seed demo data from the dashboard
+2. Connect wallet
+3. Browse marketplace listings
+4. Request payment quote
+5. Settle access flow
+6. View receipt + Shelby-backed preview rows
+7. Explore the signal atlas view
 
 ## Architecture
 
-```
+```text
 IoT Sensors → Fluxora API → Batch → Shelby Blob Storage
-                                  → Aptos (merkle roots, payments)
-                                  → PostgreSQL (metadata, indexing)
+                                  → Aptos-style settlement flow
+                                  → PostgreSQL metadata/indexing
 
-Buyers → Fluxora Web → Browse → Subscribe → Read from Shelby
+Buyers → Fluxora Web → Browse → Quote → Settle → Preview data
 ```
 
 ## Tech Stack
 
 | Layer | Tech |
 |---|---|
-| Frontend | Next.js 15, TailwindCSS, shadcn/ui |
+| Frontend | Next.js 16, TailwindCSS |
 | Backend | Fastify, Drizzle ORM |
-| Storage | Shelby Protocol (decentralized blob storage) |
-| Blockchain | Aptos (Move smart contracts) |
-| Wallet | Shelby DAA (Ethereum + Solana) |
+| Storage | Shelby Protocol integration scaffolding + blob manifests |
+| Blockchain | Aptos-style quote / settlement flow |
+| Wallet | Aptos wallet adapter + challenge / verify session flow |
 | Database | PostgreSQL |
+
+## Implemented Demo Features
+
+### Product Surface
+- Landing page with premium editorial redesign + motion
+- Marketplace with inline access flow
+- Sensor detail page with quote, settle, receipt, and preview
+- Dashboard with demo seed controls
+- Explore page with geospatial signal atlas presentation
+
+### Backend
+- Sensor CRUD
+- Ingestion endpoints
+- Batch processing service
+- Shelby manifest / preview / verify scaffolding
+- Auth challenge + verify flow
+- On-chain quote + settle endpoints
+- Demo seeding endpoint
+
+### Wallet + Access Flow
+- Wallet session bootstrapping
+- Challenge / verify auth flow
+- Quote generation
+- Settlement recording
+- Access receipt generation
+- Preview payload access after settlement
 
 ## Quick Start
 
 ### Prerequisites
 - Node.js v22+
 - Docker (for PostgreSQL)
-- Shelby CLI + Aptos CLI
+- npm v10+
 
 ### Setup
 
 ```bash
-# Clone & install
 git clone https://github.com/wisezhi/fluxora.git
 cd fluxora
 npm install
@@ -45,9 +92,8 @@ docker compose up -d
 
 # Copy env files
 cp apps/api/.env.example apps/api/.env
-# Edit .env with your Shelby credentials
 
-# Generate & run migrations
+# Run migrations
 npm run db:generate
 npm run db:migrate
 
@@ -59,20 +105,20 @@ npm run dev
 
 | Service | URL |
 |---|---|
-| Web (Frontend) | http://localhost:3000 |
-| API (Backend) | http://localhost:3001 |
-| API Health | http://localhost:3001/health |
+| Web | http://localhost:3000 |
+| API | http://localhost:3001 |
+| Health | http://localhost:3001/health |
 
 ## Project Structure
 
-```
+```text
 fluxora/
 ├── apps/
 │   ├── web/          # Next.js frontend
 │   └── api/          # Fastify backend
 ├── packages/
-│   └── shared/       # Shared types & constants
-├── contracts/        # Aptos Move smart contracts
+│   └── shared/       # Shared constants, types, on-chain models
+├── contracts/        # Reserved for Aptos Move contracts
 └── docker-compose.yml
 ```
 
@@ -80,14 +126,14 @@ fluxora/
 
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | /api/sensors | List all sensors |
+| GET | /api/sensors | List sensors |
 | GET | /api/sensors/:id | Get sensor detail |
-| POST | /api/sensors | Register new sensor |
-| POST | /api/ingest/:sensorId | Send single data point |
-| POST | /api/ingest/:sensorId/batch | Send batch data |
-| GET | /api/marketplace | Browse marketplace |
+| POST | /api/sensors | Register sensor |
+| POST | /api/ingest/:sensorId | Ingest single point |
+| POST | /api/ingest/:sensorId/batch | Ingest batch |
+| GET | /api/marketplace | Browse listings |
 | POST | /api/marketplace/subscribe | Subscribe to sensor |
-| GET | /api/marketplace/:sensorId/data | Access sensor data |
+| GET | /api/marketplace/:sensorId/data | Access sensor preview data |
 | POST | /api/auth/challenge | Create wallet auth challenge |
 | POST | /api/auth/verify | Verify wallet session |
 | POST | /api/onchain/quote | Build demo payment quote |
@@ -96,22 +142,34 @@ fluxora/
 
 ## Demo Walkthrough
 
-1. Open `/dashboard` and click **Seed demo data**
-2. Browse `/marketplace` and request a quote from any featured stream
-3. Settle the access flow to generate a receipt
-4. Open the sensor detail page to show Shelby preview rows and integrity metadata
-5. Visit `/explore` for the geospatial signal atlas view
+### Fast walkthrough
+1. Open `/dashboard`
+2. Click **Seed demo data**
+3. Open `/marketplace`
+4. Connect Petra wallet
+5. Click **Request quote** on a stream
+6. Click **Settle + fetch**
+7. Show receipt and preview rows
+8. Open `/sensor/sensor-001` for detail view
+9. Open `/explore` to show the signal atlas
+
+### Recommended showcase narrative
+- Fluxora turns machine telemetry into monetizable, verifiable digital assets
+- Producers stream data into Shelby-backed storage
+- Buyers discover streams, request access quotes, and unlock preview data
+- The app demonstrates wallet onboarding, settlement scaffolding, and integrity-aware access in one polished flow
 
 ## Deployment Notes
 
-- Web is structured for Vercel deployment
-- API is structured for Railway or any Node host
-- Use `apps/api/.env.example` and `apps/web/.env.example` as deployment env templates
+- Web is structured for Vercel-style deployment
+- API is structured for Railway-style deployment
+- Use `apps/api/.env.example` as the backend env template
 - Demo mode can be primed with `POST /api/demo/seed`
+- `apps/web/.env.example` exists locally for frontend env reference if needed in deployment setup
 
 ## Revenue Model
 
-```
+```text
 Producer sets pricing per sensor:
 ├── Per-Read: $0.001 per blob read
 ├── Hourly:   $0.50 / hour
@@ -119,10 +177,17 @@ Producer sets pricing per sensor:
 └── Monthly:  $50.00 / month
 
 Revenue Split:
-├── 95% → Producer (sensor owner)
+├── 95% → Producer
 ├── 3%  → Fluxora platform
 └── 2%  → Shelby storage
 ```
+
+## What Is Still Not Production-Final
+
+- Real multi-chain signature verification
+- Full Shelby SDK binding to live network storage
+- Real Aptos contract deployment and transaction verification
+- Production-grade persistence and operational hardening
 
 ## License
 
@@ -130,4 +195,4 @@ MIT
 
 ---
 
-Built with 🌊 on [Shelby Protocol](https://shelby.xyz) • Powered by [Aptos](https://aptos.dev)
+Built with 🌊 for demo, judging, and showcase flow on Shelby-inspired infrastructure.
