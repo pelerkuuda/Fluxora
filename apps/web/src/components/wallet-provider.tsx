@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useWallet as useAptosWallet } from "@aptos-labs/wallet-adapter-react";
 import type { WalletSession } from "@fluxora/shared";
 import { authApi } from "@/lib/api";
+import { createDemoSignature } from "@/lib/wallet-signature";
 
 interface WalletContextValue {
   session: WalletSession | null;
@@ -71,12 +72,30 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
       try {
         const walletAddress = account.address.toString();
-        const response = await authApi.connect({
+        const challenge = await authApi.challenge({
           walletAddress,
           chainType: "aptos",
-          role: "producer",
-          displayName: "Petra User",
         });
+
+        let response;
+        if (challenge.success && challenge.data) {
+          const signature = await createDemoSignature(challenge.data.message, walletAddress);
+          response = await authApi.verify({
+            challengeId: challenge.data.challengeId,
+            walletAddress,
+            chainType: "aptos",
+            signature,
+            role: "producer",
+            displayName: "Petra User",
+          });
+        } else {
+          response = await authApi.connect({
+            walletAddress,
+            chainType: "aptos",
+            role: "producer",
+            displayName: "Petra User",
+          });
+        }
 
         if (response.success && response.data) {
           setSession(response.data);

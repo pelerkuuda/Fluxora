@@ -49,4 +49,16 @@ export const API_ROUTES = {
   ACCESS: "/api/access",
   SUBSCRIPTIONS: "/api/subscriptions",
   ANALYTICS: "/api/analytics",
+  AUTH_CHALLENGE: "/api/auth/challenge",
+  AUTH_VERIFY: "/api/auth/verify",
+  ONCHAIN_QUOTE: "/api/onchain/quote",
+  ONCHAIN_SETTLE: "/api/onchain/settle",
+} as const;
+
+export const ONCHAIN_DEFAULTS = {
+  NETWORK: "aptos-testnet",
+  MODULE_ADDRESS: process.env.NEXT_PUBLIC_APTOS_MODULE_ADDRESS || "0xfluxora",
+  MODULE_NAME: "marketplace",
+  FUNCTION_SUBSCRIBE: "subscribe",
+  CHALLENGE_TTL_MS: 5 * 60 * 1000,
 } as const;

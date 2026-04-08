@@ -1,7 +1,7 @@
 // Fluxora API Client
 // Frontend utility for communicating with Fluxora API
 
-import type { AuthResponse, WalletSession } from "@fluxora/shared";
+import type { AuthResponse, ContractPaymentQuote, WalletChallenge, WalletSession } from "@fluxora/shared";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -25,6 +25,24 @@ export async function apiFetch<T>(
 
 // Auth API
 export const authApi = {
+  challenge: (data: {
+    walletAddress: string;
+    chainType: "ethereum" | "solana" | "aptos";
+  }) => apiFetch<WalletChallenge>("/api/auth/challenge", {
+    method: "POST",
+    body: JSON.stringify(data),
+  }),
+  verify: (data: {
+    challengeId: string;
+    walletAddress: string;
+    chainType: "ethereum" | "solana" | "aptos";
+    signature: string;
+    displayName?: string;
+    role?: "user" | "producer" | "admin";
+  }) => apiFetch<WalletSession>("/api/auth/verify", {
+    method: "POST",
+    body: JSON.stringify(data),
+  }) as Promise<AuthResponse>,
   connect: (data: {
     walletAddress: string;
     chainType?: "ethereum" | "solana" | "aptos";
@@ -68,6 +86,25 @@ export const sensorsApi = {
 };
 
 // Marketplace API
+export const onchainApi = {
+  quote: (data: { sensorId: string; plan: "per_read" | "hourly" | "daily" | "monthly" }) =>
+    apiFetch<ContractPaymentQuote>("/api/onchain/quote", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  settle: (data: {
+    sensorId: string;
+    plan: "per_read" | "hourly" | "daily" | "monthly";
+    txHash: string;
+    buyerAddress: string;
+    amountPaid?: number;
+  }) =>
+    apiFetch("/api/onchain/settle", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+};
+
 export const marketplaceApi = {
   browse: (params?: { type?: string; page?: number }) => {
     const query = new URLSearchParams(params as Record<string, string>).toString();

@@ -6,6 +6,7 @@ import { z } from "zod";
 import { eq, desc, sql } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { sensors, dataBlobs, subscriptions, users } from "../db/schema.js";
+import { getShelbyService } from "../services/shelby.js";
 
 const subscribeSchema = z.object({
   sensorId: z.string(),
@@ -217,15 +218,20 @@ export async function marketplaceRoutes(app: FastifyInstance) {
         .orderBy(desc(dataBlobs.createdAt))
         .limit(50);
 
-      // TODO: Actually download from Shelby
-      // const shelby = getShelbyService();
-      // const data = await Promise.all(blobs.map(b => shelby.downloadBlob(b.blobName)));
+      const shelby = getShelbyService();
+      const enrichedBlobs = await Promise.all(
+        blobs.map(async (blob) => ({
+          ...blob,
+          manifest: await shelby.getManifest(blob.blobName),
+          preview: await shelby.downloadBlob(blob.blobName),
+        }))
+      );
 
       return {
         success: true,
         data: {
-          blobs,
-          message: "Use blob names to download data via Shelby SDK",
+          blobs: enrichedBlobs,
+          message: "Shelby manifests and preview payloads included",
         },
       };
     } catch (err) {

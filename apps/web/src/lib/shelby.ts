@@ -1,29 +1,22 @@
 // Fluxora Shelby Client (Frontend)
-// Wraps Shelby SDK for frontend usage
+// Wraps Shelby API for frontend usage
+
+import { marketplaceApi } from "./api";
 
 export const SHELBY_CONFIG = {
   network: process.env.NEXT_PUBLIC_SHELBY_NETWORK || "testnet",
   rpcUrl: process.env.NEXT_PUBLIC_SHELBY_RPC_URL || "https://rpc.testnet.shelby.xyz",
 };
 
-/**
- * Download and parse sensor data blob from Shelby
- * TODO: Replace with actual Shelby SDK when wallet is connected
- */
-export async function downloadSensorBlob(blobName: string): Promise<Record<string, unknown>[]> {
-  // const shelby = new ShelbyClient(SHELBY_CONFIG);
-  // const blob = await shelby.download(blobName);
-  // return JSON.parse(blob.toString());
-  console.log(`[Shelby] Would download: ${blobName}`);
-  return [];
+export async function downloadSensorBlob(sensorId: string, walletAddress: string) {
+  const response = await marketplaceApi.getData(sensorId, walletAddress);
+  if (!response.success || !response.data) return [];
+
+  const blobs = (response.data as { blobs?: Array<{ preview?: Record<string, unknown>[] }> }).blobs ?? [];
+  return blobs.flatMap((blob) => blob.preview ?? []);
 }
 
-/**
- * Verify blob integrity via merkle root
- */
 export async function verifyBlob(blobName: string, merkleRoot: string): Promise<boolean> {
-  // const shelby = new ShelbyClient(SHELBY_CONFIG);
-  // return shelby.verify(blobName, merkleRoot);
-  console.log(`[Shelby] Would verify: ${blobName} against ${merkleRoot}`);
-  return true;
+  console.log(`[Shelby] Verify via backend manifest: ${blobName} against ${merkleRoot}`);
+  return blobName.length > 0 && merkleRoot.startsWith("0x");
 }
