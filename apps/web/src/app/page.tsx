@@ -1,4 +1,4 @@
-import { ParticleWave } from "@/components/particle-wave";
+import { ParticleWaveGL } from "@/components/particle-wave-gl";
 
 const metrics = [
   ["12.4M", "telemetry events / day"],
@@ -9,8 +9,8 @@ const metrics = [
 export default function Home() {
   return (
     <section className="orbit-shell relative flex min-h-screen flex-col justify-between px-4 pb-16 pt-36 sm:px-6 lg:px-8">
-      <div className="absolute inset-x-0 top-20 h-[460px] overflow-hidden">
-        <ParticleWave />
+      <div className="absolute inset-x-0 top-16 h-[500px] overflow-hidden">
+        <ParticleWaveGL />
       </div>
 
       <div />
