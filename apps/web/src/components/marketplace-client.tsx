@@ -139,9 +139,7 @@ export function MarketplaceClient() {
                     isActive ? "border-primary text-primary" : "border-border text-white/70 hover:text-white"
                   }`}
                 >
-                  <span>
-                    {config.icon} {config.label}
-                  </span>
+                  <span>{config.label}</span>
                   <span className="text-[11px] text-white/45">{filterCounts[key]}</span>
                 </button>
               );
