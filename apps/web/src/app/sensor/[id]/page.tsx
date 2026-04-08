@@ -1,3 +1,5 @@
+import { SensorAccessPanel } from "@/components/sensor-access-panel";
+
 const pricingPlans = [
   ["Per read", "$0.001"],
   ["Hourly", "$0.50"],
@@ -68,10 +70,9 @@ export default async function SensorDetailPage({
                 </div>
               ))}
             </div>
-            <button className="motion-button mt-8 inline-flex h-12 items-center justify-center border border-primary px-6 font-mono text-sm uppercase text-primary transition-colors duration-150 ease-out hover:bg-primary hover:text-black">
-              [Connect wallet]
-            </button>
           </div>
+
+          <SensorAccessPanel sensorId={sensor.id} />
 
           <div className="motion-frame border border-border p-6">
             <div className="font-mono text-xs uppercase tracking-[0.22em] text-white/45">Recent samples</div>
